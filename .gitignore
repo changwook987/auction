@@ -1,0 +1,5 @@
+server
+start.bat
+# Project exclude paths
+/.gradle/
+/build/
