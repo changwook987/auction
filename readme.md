@@ -1,7 +1,5 @@
 # Auction!
 
----
-
 > *minecraft auction plugin*
 >
 
@@ -24,11 +22,11 @@
 
     ```kotlin
     repository {
-    	mavenCentral()
+        mavenCentral()
     }
     
     dependencies {
-    	implementation("mysql:mysql-connector-java:8.0.28")
+        implementation("mysql:mysql-connector-java:8.0.28")
     }
     ```
 
@@ -38,45 +36,45 @@
 
     ```kotlin
     object AuctionDatabase {
-    	private lateinit var plugin: JavaPlugin
+        private lateinit var plugin: JavaPlugin
     
-    	//MySql configuration
-    	private lateinit var host: String
-    	private lateinit var port: String
-    	private lateinit var database: String
-    	private lateinit var user: String
-    	private lateinit var password: String
+        //MySql configuration
+        private lateinit var host: String
+        private lateinit var port: String
+        private lateinit var database: String
+        private lateinit var user: String
+        private lateinit var password: String
     
-    	fun init(
-    			plugin: JavaPlugin,
-    			host: String,
-    			port: String,
-    			database: String,
-    			user: String,
-    			password: String
-    	) {
-    		this.plugin = plugin
-    	}
+        fun init(
+                plugin: JavaPlugin,
+                host: String,
+                port: String,
+                database: String,
+                user: String,
+                password: String
+        ) {
+            this.plugin = plugin
+        }
     
-    	fun getConnection() : Connection {
-    		Class.forName("com.mysql.cj.jdbc.Driver")
+        fun getConnection() : Connection {
+            Class.forName("com.mysql.cj.jdbc.Driver")
     
-    		val url = "jdbc:mysql://$host:$port/$database"
-    		val connection = DriverManager.getConnection(url, user, password)
+            val url = "jdbc:mysql://$host:$port/$database"
+            val connection = DriverManager.getConnection(url, user, password)
     
-    		require(connection != null)
-    		return connection
-    	}
+            require(connection != null)
+            return connection
+        }
     
-    	inline fun connection(block: Connect.() -> Unit) {
-    		val conn = getConnection()
+        inline fun connection(block: Connect.() -> Unit) {
+            val conn = getConnection()
     		
-    		Connect(conn).block()
+            Connect(conn).block()
     		
-    		conn.close()
-    	}
+            conn.close()
+        }
     
-    	class Connect(val connection: Connection)
+        class Connect(val connection: Connection)
     }
     ```
 
@@ -87,21 +85,25 @@
 
     ```kotlin
     AuctionDatabase.connection {
-    	val stmt = connection.createStatement()
-    	val rs = stmt.executeQuery("SELECT number, itemStack, prise, owner from items")
+        val stmt = connection.createStatement()
+        val rs = stmt.executeQuery("SELECT number, itemStack, prise, owner from items")
     	
-    	val list = ArrayList<AuctionItem>()
-    	while(rs.next()) {
-    		val number = rs.getInt("number")
-    		val itemStack = ItemStack.deserializeBytes (
-    			rs.getBlob("itemStack").run { getBytes(1, length().toInt()) }
-    		)
-    		val prise = rs.getInt("prise")
-    		val owner = UUID.fromString(rs.getString("owner"))
+        val list = ArrayList<AuctionItem>()
+        while(rs.next()) {
+            val number = rs.getInt("number")
+            val itemStack = ItemStack.deserializeBytes (
+                rs.getBlob("itemStack").run { getBytes(1, length().toInt()) }
+            )
+            val prise = rs.getInt("prise")
+            val owner = UUID.fromString(rs.getString("owner"))
     
-    		list += AuctionItem(number, itemStack, prise, owner)
-    	}
+            list += AuctionItem(number, itemStack, prise, owner)
+        }
     }
     ```
 
   - 이렇게 아이템들을 가져올 수 있고 select 문에 where 을 사용하여 필터도 사용할 수 있다.
+- 장바구니
+  - DB 테이블에 shopping_bag 테이블을 추가, 이 테이블에서 무슨 아이템이 누구의 장바구니에 들어있는지 확인하여 표시한다
+  - TODO 장바구니안의 아이템 삭제 & item 테이블에서 삭제된 값은 같이 삭제  (user 포함)
+    - foreign key 사용하기
