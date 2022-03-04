@@ -2,6 +2,8 @@ package io.github.changwook987.auction
 
 import java.sql.Connection
 import java.sql.DriverManager
+import java.sql.PreparedStatement
+import java.sql.Statement
 
 object Database {
 
@@ -43,5 +45,19 @@ object Database {
         conn.close()
     }
 
-    class Connect(val connection: Connection)
+    class Connect(val connection: Connection) {
+        fun prepareStatement(sql: String, block: PreparedStatement.() -> Unit) {
+            connection.prepareStatement(sql).let {
+                it.block()
+                it.close()
+            }
+        }
+
+        fun createStatement(block: Statement.() -> Unit) {
+            connection.createStatement().let {
+                it.block()
+                it.close()
+            }
+        }
+    }
 }

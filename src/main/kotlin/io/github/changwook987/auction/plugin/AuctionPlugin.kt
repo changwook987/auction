@@ -34,17 +34,17 @@ class AuctionPlugin : JavaPlugin() {
         Database.init(host!!, port!!, database!!, user!!, password!!)
 
         Database.connection {
-            connection.prepareStatement("create table if not exists item(item_key int primary key auto_increment, itemStack blob, owner char(36), prise int)")
-                .let {
-                    it.executeUpdate()
-                    it.close()
-                }
+            prepareStatement("create table if not exists item(item_key int primary key auto_increment, itemStack blob, owner char(36), prise int)") {
+                executeUpdate()
+            }
 
-            connection.prepareStatement("create table if not exists user(user_key int primary key auto_increment, uuid char(36), money int)")
-                .let {
-                    it.executeUpdate()
-                    it.close()
-                }
+            prepareStatement("create table if not exists user(user_key int primary key auto_increment, uuid char(36), money int)") {
+                executeUpdate()
+            }
+
+            prepareStatement("create table if not exists shopping_bag(entry_key int primary key auto_increment, user_key int, item_key int, unique key(user_key, item_key) )") {
+                executeUpdate()
+            }
         }
 
         EventListener(this).register()
