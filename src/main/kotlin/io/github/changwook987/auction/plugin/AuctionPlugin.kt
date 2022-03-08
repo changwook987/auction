@@ -42,7 +42,7 @@ class AuctionPlugin : JavaPlugin() {
                 executeUpdate()
             }
 
-            prepareStatement("create table if not exists shopping_bag(entry_key int primary key auto_increment, user_key int, item_key int, unique key(user_key, item_key) )") {
+            prepareStatement("create table if not exists shopping_bag(entry_key int primary key auto_increment, user_key int, item_key int, unique key(user_key, item_key), foreign key(item_key) references item(item_key) on delete cascade, foreign key(user_key) references user(user_key) on delete cascade)") {
                 executeUpdate()
             }
         }

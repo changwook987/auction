@@ -135,7 +135,7 @@ object InvAuction {
                                     }
 
                                     Database.connection { // 추가
-                                        connection.prepareStatement("update user set money = (select * from (select money from user where uuid=\"${item.owner}\") as a) + ${item.prise} where uuid=\"${item.owner}\"")
+                                        connection.prepareStatement("update user set money = money + ${item.prise} where uuid=\"${item.owner}\"")
                                             .let {
                                                 it.executeUpdate()
                                                 it.close()
