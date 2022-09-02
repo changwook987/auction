@@ -1,0 +1,6 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="auction-frontend">
+    <output-path>$PROJECT_DIR$/auction-frontend/build/libs</output-path>
+    <root id="archive" name="auction-frontend.jar" />
+  </artifact>
+</component>
